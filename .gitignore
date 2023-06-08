@@ -51,3 +51,6 @@ rsconnect/
 # Some temp files
 PatronesPuntuales_files/
 
+# Some large db
+Data/Global_terrorism.csv
+
