@@ -11,3 +11,8 @@ db1 <- db %>% filter(., country_txt == "Colombia") %>%
 
 #Aprox 2% of missing data in the variables long and lat 
 missmap(db1)
+
+#Removed NA, Db with 7853 obs and 6 variables
+db1 %<>% na.omit()
+
+write.csv(db1, "Data/Colombia_Terrorism.csv")
