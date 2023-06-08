@@ -1,0 +1,14 @@
+---
+title: "Patrones Puntuales Espaciales"
+format: 
+  html: 
+    theme: materia
+editor: visual
+---
+
+
+
+```{r}
+
+```
+
