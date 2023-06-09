@@ -1,14 +1,44 @@
 ---
 title: "Patrones Puntuales Espaciales"
+author: 
+  - Santiago Rojas 
 format: 
   html: 
     theme: materia
 editor: visual
 ---
 
+## Paquetes:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(magrittr)
+library(sf)
+library(mapview)
+```
+
+## Some DB:
+
+<https://www.kaggle.com/datasets/blackecho/italy-earthquakes>
+
+<https://www.kaggle.com/datasets/sobhanmoosavi/us-accidents>
+
+<https://www.kaggle.com/datasets/START-UMD/gtd>
+
+```{r}
+colombia <- st_read("Maps_Shapes/MGN_DPTO_POLITICO.shp")
+border_col <- st_coordinates(colombia$geometry)
+```
+
+
+```{r, cache=TRUE}
+db <- read.csv("Data/Colombia_Terrorism.csv")
+coord <- data.frame(x=as.numeric(db$longitude), y=as.numeric(db$latitude))
+```
 
 
 ```{r}
-
+mapview(colombia, legend=F, col.regions="gray") + 
+  mapview(coord, xcol="x", y="y")
 ```
 
