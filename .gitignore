@@ -55,3 +55,8 @@ PatronesPuntuales_files/
 # Some large db
 Data/Global_terrorism.csv
 
+# some .Rdata
+Maps_Shapes_and_Objects/models.RData
+Maps_Shapes_and_Objects/Contour_Points.RData
+
+
