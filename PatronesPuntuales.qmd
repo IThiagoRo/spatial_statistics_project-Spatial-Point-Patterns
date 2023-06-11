@@ -14,19 +14,17 @@ editor: visual
 library(tidyverse)
 library(magrittr)
 library(sf)
+library(spatstat)
 library(mapview)
 ```
 
-## Some DB:
-
-<https://www.kaggle.com/datasets/blackecho/italy-earthquakes>
-
-<https://www.kaggle.com/datasets/sobhanmoosavi/us-accidents>
+## DB:
 
 <https://www.kaggle.com/datasets/START-UMD/gtd>
 
+
 ```{r}
-colombia <- st_read("Maps_Shapes/MGN_DPTO_POLITICO.shp")
+colombia <- st_read("Maps_Shapes_and_Objects/MGN_DPTO_POLITICO.shp")
 border_col <- st_coordinates(colombia$geometry)
 ```
 
@@ -34,11 +32,85 @@ border_col <- st_coordinates(colombia$geometry)
 ```{r, cache=TRUE}
 db <- read.csv("Data/Colombia_Terrorism.csv")
 coord <- data.frame(x=as.numeric(db$longitude), y=as.numeric(db$latitude))
+load("Maps_Shapes_and_Objects/Contour_Points.RData")
 ```
 
 
 ```{r}
 mapview(colombia, legend=F, col.regions="gray") + 
   mapview(coord, xcol="x", y="y")
+```
+
+
+```{r}
+ppp.col <- readRDS("Maps_Shapes_and_Objects/ppp.col.Rds")
+qc.col <- quadratcount(ppp.col, nx = 3, ny = 3)
+plot(ppp.col, main = "Conteo por cuadrantes",
+     axes = T, xaxt = "n", yaxt = "n")
+plot(qc.col, add = T, textargs = list(col = "red"))
+```
+```{r}
+quadrat.test(ppp.col)
+```
+
+```{r, echo = F}
+graph_ppp <- function(sigma, scott = F) {
+  ds <- density.ppp(ppp.col, sigma = sigma)
+  title <- ifelse(scott, paste("Ancho de banda en x:", sigma[1],
+                               "\nAncho de banda en y:", sigma[2]),
+                  paste0("Ancho de banda: ", sigma))
+  plot(ds, main = title)
+}
+bwds <- readRDS("Maps_Shapes_and_Objects/bandwidths.Rds")
+```
+
+
+
+## Diggle
+
+```{r, echo = F}
+graph_ppp(bwds[[1]])
+plot(locations, add = T, cex = 0.2)
+```
+
+## Scott
+
+```{r, echo = F}
+graph_ppp(bwds[[2]], T)
+plot(locations, add = T, cex = 0.2)
+```
+
+## CvL
+
+```{r, echo = F}
+graph_ppp(bwds[[3]])
+plot(locations, add = T, cex = 0.2)
+```
+
+## Frac
+
+```{r, echo = F}
+graph_ppp(bwds[[4]])
+plot(locations, add = T, cex = 0.2)
+```
+
+## PPL
+
+```{r, echo = F}
+graph_ppp(bwds[[5]])
+plot(locations, add = T, cex = 0.2)
+```
+
+## Empírico
+
+```{r, echo = F}
+graph_ppp(2000)
+plot(locations, add = T, cex = 0.2)
+```
+
+
+
+```{r}
+load("Maps_Shapes_and_Objects/models.RData")
 ```
 
