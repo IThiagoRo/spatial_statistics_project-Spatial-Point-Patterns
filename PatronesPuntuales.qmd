@@ -25,19 +25,17 @@ editor_options:
 
 # Introducción
 
-El terrorismo, un tema que en algún momento a afectado a cada país en cierta medida, aunque es característico de algunas zonas del mundo, hasta países que están en desarrollo como los latinos no se han salvado del uso del terror contra inocentes. Solo en Colombia hay un total de 9.514.863 personas lo cual representa un 18.44% de la población colombiana, lo que da evidencia de la gravedad del problema en este país latinoamericano.
-
+El terrorismo es un fenómeno que ha afectado a cada país en cierta medida. Aunque es más característico de algunas zonas del mundo, incluso países en desarrollo como los de América Latina no se han librado del uso del terror contra inocentes. En Colombia, específicamente, el impacto del terrorismo es alarmante, ya que afecta a un total de 9.514.863 personas, lo cual representa un 18.44% de la población colombiana. Esto evidencia la gravedad del problema en este país latinoamericano.
 
 # Marco teórico
 
-“El terrorismo no es un fenómeno simple ni fácilmente tipificable. Hay terrorismo puro, terrorismo auxiliar de guerrillas, movimientos o partidos y terrorismo de origen delincuencial.” El caso colombiano es el de un terrorismo que pretendió, y logró parcialmente, cambiar regulaciones estatales. A finales de los años ochenta, sobre todo, tomó este cariz político. No a la extradición, no al actuar de policía, justicia y medios de comunicación contra los intereses de los carteles, no a todo lo que significara un obstáculo para los carteles de la droga. El baño de sangre subsiguiente se recuerda con estremecimiento. El precio pagado por las instituciones y por la sociedad fue muy alto. Cesó cuando fue claro que los recursos institucionales, sumados a la ayuda de la comunidad internacional, lograron derrotar al cartel de Medellín. Pero mientras duró hizo que la violencia terrorista, sentida como rural y aislada hasta entonces por los colombianos, llegara a las ciudades, a las clases sociales antes libres de amenaza y a las instituciones centrales del Estado.
-El terrorismo en Colombia parte de las guerrillas revolucionarias como las FARS, ELN, EPL y AUC, y otras que desaparecieron como el M-19, Quintín Lame y muchas otras más. Todas estas guerrillas han tenido un impacto significativamente negativo, como, por ejemplo:
-Pérdida de vidas humanas: lo largo del conflicto armado interno, miles de personas han perdido la vida, incluyendo civiles, militares y los propios guerrilleros
-Desplazamiento forzado: La violencia generada por la guerrilla ha sido una de las principales causas del desplazamiento interno en Colombia. Millones de personas han sido obligadas a abandonar sus hogares y comunidades debido al temor a la violencia y a la persecución.
-Cultivo y tráfico de drogas: Algunas guerrillas han estado involucradas en el cultivo y tráfico de drogas ilícitas, lo que ha contribuido a la consolidación de economías ilegales y a la violencia asociada al narcotráfico
+El terrorismo no puede ser simplificado ni fácilmente tipificado, ya que puede presentarse de diferentes formas. En el caso de Colombia, se trata de un terrorismo que ha tenido como objetivo cambiar regulaciones estatales. Específicamente, a finales de los años ochenta, el terrorismo adoptó un carácter político en el país, oponiéndose a la extradición, atacando a la policía, la justicia y los medios de comunicación que se oponían a los intereses de los carteles de la droga. Esta etapa se recuerda con estremecimiento debido al baño de sangre que se produjo. Las instituciones y la sociedad colombiana pagaron un precio muy alto durante este período. Sin embargo, la violencia terrorista cesó cuando quedó claro que los recursos institucionales y la ayuda de la comunidad internacional lograron derrotar al cartel de Medellín. Aunque el terrorismo era percibido principalmente como un problema rural y aislado, durante esta época llegó a las ciudades, afectando a todas las clases sociales y a las instituciones centrales del Estado.
 
-Como se puede ver, el terrorismo (en su mayor parte causado por la guerrilla) está muy presente en Colombia, y todo esto se justifica con el conocimiento de que este país en el índice de terrorismo global esta en el puesto 15 en todo el mundo.
+El terrorismo en Colombia está vinculado a grupos guerrilleros como las FARC, el ELN, el EPL y la AUC, así como a otros grupos que ya desaparecieron, como el M-19, Quintín Lame y muchos más. Todas estas guerrillas han tenido un impacto negativo significativo en el país. Algunas de las consecuencias son: la pérdida de vidas humanas, incluyendo civiles, militares y guerrilleros a lo largo del conflicto armado interno; el desplazamiento forzado, siendo la violencia generada por la guerrilla una de las principales causas del desplazamiento interno en Colombia, obligando a millones de personas a abandonar sus hogares y comunidades debido al temor a la violencia y persecución; y el cultivo y tráfico de drogas, donde algunas guerrillas han estado involucradas en estas actividades ilícitas, contribuyendo a la consolidación de economías ilegales y a la violencia asociada al narcotráfico.
 
+En resumen, el terrorismo, principalmente causado por grupos guerrilleros, está muy presente en Colombia, como lo demuestra su posición en el puesto 15 en el índice de terrorismo global.
+
+# Paquetes, lectura de la DB y el mapa de Colombia: 
 
 ## Paquetes:
 
@@ -118,43 +116,14 @@ graph_ppp <- function(sigma, scott = F) {
 bwds <- readRDS("Maps_Shapes_and_Objects/bandwidths.Rds")
 ```
 
+
+De manera descriptiva y utilizando el test $\chi^2$, se comprueba que el parámetro de la intensidad no es constante. Por lo tanto, se procede a realizar un ajuste utilizando algunos métodos de suavizamiento. 
+
+
 # Estimación no parametrica de la intensidad (Kernels)
 
+
 :::{.panel-tabset}
-## Diggle
-
-```{r, echo = F}
-graph_ppp(bwds[[1]])
-plot(locations, add = T, cex = 0.2)
-```
-
-## Scott
-
-```{r, echo = F}
-graph_ppp(bwds[[2]], T)
-plot(locations, add = T, cex = 0.2)
-```
-
-## CvL
-
-```{r, echo = F}
-graph_ppp(bwds[[3]])
-plot(locations, add = T, cex = 0.2)
-```
-
-## Frac
-
-```{r, echo = F}
-graph_ppp(bwds[[4]])
-plot(locations, add = T, cex = 0.2)
-```
-
-## PPL
-
-```{r, echo = F}
-graph_ppp(bwds[[5]])
-plot(locations, add = T, cex = 0.2)
-```
 
 ## Empírico
 
@@ -163,13 +132,57 @@ graph_ppp(2000)
 plot(locations, add = T, cex = 0.2)
 ```
 
+
+## Diggle
+
+```{r, echo = F}
+graph_ppp(bwds[[1]])
+plot(locations, add = T, cex = 0.2)
+```
+
+
+## CvL
+
+```{r, echo = F}
+graph_ppp(bwds[[3]])
+plot(locations, add = T, cex = 0.2)
+```
+
+
+## PPL
+
+```{r, echo = F}
+graph_ppp(bwds[[5]])
+plot(locations, add = T, cex = 0.2)
+```
+
+
+## Frac
+
+```{r, echo = F}
+graph_ppp(bwds[[4]])
+plot(locations, add = T, cex = 0.2)
+```
+
+
+## Scott
+
+```{r, echo = F}
+graph_ppp(bwds[[2]], T)
+plot(locations, add = T, cex = 0.2)
+```
+
 :::
+
+Durante la estimación de la intensidad, se prueban diferentes anchos de banda con la intención de seleccionar el ancho de banda óptimo. Se observa que muchos métodos de suavizado no logran capturar de manera precisa la relación espacial. Se destaca el método **Scott** con un ancho de banda en **X** de **57,843.91** y un ancho de banda en **Y** de **88,432.46**, el cual asigna una mayor probabilidad de sufrir actos violentos a las zonas con mayores afectaciones y una menor probabilidad a las zonas con menores afectaciones. Concluimos que el método anterior, junto con su respectivo ancho de banda, se ajusta mejor a nuestro problema de investigación.  
 
 ```{r, echo=FALSE}
 load("Maps_Shapes_and_Objects/models.RData")
 ```
 
 # Estimación Parametrica de la intensidad
+
+## Modelos Lineales
 
 :::{.panel-tabset}
 
@@ -274,6 +287,9 @@ diagnose.ppm(models_list[[5]], which = "smooth",
              main = "Modelo cuadrático con interacción")
 ```
 :::
+
+
+Durante la estimación de la intensidad utilizando métodos paramétricos lineales y cuadráticos, se observa que los métodos lineales no capturan de manera óptima la relación espacial. Sin embargo, al utilizar **métodos cuadráticos** se logra una mejora sustancial. Se destaca especialmente el **método cuadrático con interacción**, ya que es el que mejor asigna la probabilidad de ocurrencia de eventos violentos en determinadas zonas de Colombia.
 
 # Propiedades de segundo orden 
 
