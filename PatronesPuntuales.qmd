@@ -39,7 +39,7 @@ Cultivo y tráfico de drogas: Algunas guerrillas han estado involucradas en el c
 Como se puede ver, el terrorismo (en su mayor parte causado por la guerrilla) está muy presente en Colombia, y todo esto se justifica con el conocimiento de que este país en el índice de terrorismo global esta en el puesto 15 en todo el mundo.
 
 
-# Paquetes:
+## Paquetes:
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -49,11 +49,14 @@ library(spatstat)
 library(mapview)
 ```
 
-# DB:
+## Lectura de la base de datos y el mapa de Colombia:
+
+La base de datos pertenece a un dataset de Kaggle sobre terrorismo global, el cual, para el propósito de este trabajo, vamos a tomar la información pertinente a Colombia. Esto nos lleva a tener un conjunto de datos de **7,835** observaciones que abarcan desde el año **1970** hasta el **2017**. 
+Se toma del **DANE** la información necesaria para tener información del contorno de Colombia. 
 
 <https://www.kaggle.com/datasets/START-UMD/gtd>
 
-```{r, echo = FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+```{r, warning=FALSE, message=FALSE, cache=TRUE}
 colombia <- st_read("Maps_Shapes_and_Objects/MGN_DPTO_POLITICO.shp")
 border_col <- st_coordinates(colombia$geometry)
 
@@ -63,12 +66,16 @@ coord <- data.frame(x=as.numeric(db$longitude), y=as.numeric(db$latitude))
 load("Maps_Shapes_and_Objects/Contour_Points.RData")
 ```
 
+# Visualizacíon de los datos 
 
-
+## Mapa de Colombia
 ```{r}
 mapview(colombia, legend=F, col.regions="gray") + 
   mapview(coord, xcol="x", y="y")
 ```
+
+A simple vista se puede observar una gran cantidad de lugares afectados por actos violentos. Se destacan los departamentos centrales y del norte de Colombia por contar con una gran cantidad de ocurrencias, lo cual nos lleva a concluir de manera descriptiva la existencia de aglomeraciones o conglomerados **(Clusters)** de actos violentos en ciertos departamentos de Colombia. 
+
 
 ```{r}
 ppp.col <- readRDS("Maps_Shapes_and_Objects/ppp.col.Rds")
@@ -78,11 +85,27 @@ plot(ppp.col, main = "Conteo por cuadrantes",
 plot(qc.col, add = T, textargs = list(col = "red"))
 ```
 
+Del gráfico anterior de conteos por cuadrante se aprecia la cantidad de ocurrencias de actos violentos en el interior de Colombia, mostrando de manera más detallada que los departamentos ubicados en el centro y el norte del país fueron altamente afectados. De esta manera, se evidencia la falta de simetría en la cantidad de ocurrencias por cuadrante, lo que nos lleva a concluir descriptivamente que existe la posibilidad de encontrar algún tipo de patrón espacial.
 
+
+# Prueba chi-cuadrado
+
+
+$$
+\begin{cases}
+\begin{aligned}
+\text{H}_0: &\text{Aleatoriedad Espacial} \\
+\text{H}_1: &\text{Autocorrelacón Espacial}
+\end{aligned}
+\end{cases}
+$$
 
 ```{r}
 quadrat.test(ppp.col)
 ```
+
+Con un **p-valor < ** $\alpha = 0.05$, esto nos permite rechazar la hipótesis de homogeneidad de intensidad, lo que nos indica que estamos frente a un proceso **poisson inhomogéneo**. Esto implica que la intensidad puede ser modelada mediante alguna relación $\lambda(x,y)$, ya sea a través de una relación funcional paramétrica o no paramétrica (kernel).
+
 
 ```{r, echo = F}
 graph_ppp <- function(sigma, scott = F) {
@@ -280,3 +303,5 @@ plot(pcf(ppp.col), main = "Pair-Correlation estimada")
 - Policia nacional de colombia TERRORISMO, NARCOTRÁFICO Y DELINCUENCIA. Policia.gov.co. Retrieved June 11, 2023, from    <https://www.policia.gov.co/file/6568/download?token=27d2k7iB>
   
 - Overall Terrorism Index Score. Vision of Humanity. Retrieved June 11, 2023, from <https://www.visionofhumanity.org/maps/global-terrorism-index/#/>
+
+- Contorno de Colombia, from <https://geoportal.dane.gov.co/servicios/descarga-y-metadatos/descarga-mgn-marco-geoestadistico-nacional/>
