@@ -2,13 +2,44 @@
 title: "Patrones Puntuales Espaciales"
 author: 
   - Santiago Rojas 
-format: 
-  html: 
-    theme: materia
-editor: visual
+format: html
+toc: true
+toc-location: left
+lang: es
+editor: source
+df-print: paged
+code-fold: show
+code-tools:
+  source: false
+  toggle: true
+  caption: none
+execute: 
+  warning: false
+tbl-colwidths: auto
+link-external-newwindow: true
+editor_options: 
+  chunk_output_type: console
+
 ---
 
-## Paquetes:
+
+# Introducción
+
+El terrorismo, un tema que en algún momento a afectado a cada país en cierta medida, aunque es característico de algunas zonas del mundo, hasta países que están en desarrollo como los latinos no se han salvado del uso del terror contra inocentes. Solo en Colombia hay un total de 9.514.863 personas lo cual representa un 18.44% de la población colombiana, lo que da evidencia de la gravedad del problema en este país latinoamericano.
+
+
+# Marco teórico
+
+“El terrorismo no es un fenómeno simple ni fácilmente tipificable. Hay terrorismo puro, terrorismo auxiliar de guerrillas, movimientos o partidos y terrorismo de origen delincuencial.” El caso colombiano es el de un terrorismo que pretendió, y logró parcialmente, cambiar regulaciones estatales. A finales de los años ochenta, sobre todo, tomó este cariz político. No a la extradición, no al actuar de policía, justicia y medios de comunicación contra los intereses de los carteles, no a todo lo que significara un obstáculo para los carteles de la droga. El baño de sangre subsiguiente se recuerda con estremecimiento. El precio pagado por las instituciones y por la sociedad fue muy alto. Cesó cuando fue claro que los recursos institucionales, sumados a la ayuda de la comunidad internacional, lograron derrotar al cartel de Medellín. Pero mientras duró hizo que la violencia terrorista, sentida como rural y aislada hasta entonces por los colombianos, llegara a las ciudades, a las clases sociales antes libres de amenaza y a las instituciones centrales del Estado.
+El terrorismo en Colombia parte de las guerrillas revolucionarias como las FARS, ELN, EPL y AUC, y otras que desaparecieron como el M-19, Quintín Lame y muchas otras más. Todas estas guerrillas han tenido un impacto significativamente negativo, como, por ejemplo:
+Pérdida de vidas humanas: lo largo del conflicto armado interno, miles de personas han perdido la vida, incluyendo civiles, militares y los propios guerrilleros
+Desplazamiento forzado: La violencia generada por la guerrilla ha sido una de las principales causas del desplazamiento interno en Colombia. Millones de personas han sido obligadas a abandonar sus hogares y comunidades debido al temor a la violencia y a la persecución.
+Cultivo y tráfico de drogas: Algunas guerrillas han estado involucradas en el cultivo y tráfico de drogas ilícitas, lo que ha contribuido a la consolidación de economías ilegales y a la violencia asociada al narcotráfico
+
+Como se puede ver, el terrorismo (en su mayor parte causado por la guerrilla) está muy presente en Colombia, y todo esto se justifica con el conocimiento de que este país en el índice de terrorismo global esta en el puesto 15 en todo el mundo.
+
+
+# Paquetes:
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -18,29 +49,26 @@ library(spatstat)
 library(mapview)
 ```
 
-## DB:
+# DB:
 
 <https://www.kaggle.com/datasets/START-UMD/gtd>
 
-
-```{r}
+```{r, echo = FALSE, warning=FALSE, message=FALSE, cache=TRUE}
 colombia <- st_read("Maps_Shapes_and_Objects/MGN_DPTO_POLITICO.shp")
 border_col <- st_coordinates(colombia$geometry)
-```
 
-
-```{r, cache=TRUE}
 db <- read.csv("Data/Colombia_Terrorism.csv")
 coord <- data.frame(x=as.numeric(db$longitude), y=as.numeric(db$latitude))
+
 load("Maps_Shapes_and_Objects/Contour_Points.RData")
 ```
+
 
 
 ```{r}
 mapview(colombia, legend=F, col.regions="gray") + 
   mapview(coord, xcol="x", y="y")
 ```
-
 
 ```{r}
 ppp.col <- readRDS("Maps_Shapes_and_Objects/ppp.col.Rds")
@@ -49,6 +77,9 @@ plot(ppp.col, main = "Conteo por cuadrantes",
      axes = T, xaxt = "n", yaxt = "n")
 plot(qc.col, add = T, textargs = list(col = "red"))
 ```
+
+
+
 ```{r}
 quadrat.test(ppp.col)
 ```
@@ -64,8 +95,9 @@ graph_ppp <- function(sigma, scott = F) {
 bwds <- readRDS("Maps_Shapes_and_Objects/bandwidths.Rds")
 ```
 
+# Estimación no parametrica de la intensidad (Kernels)
 
-
+:::{.panel-tabset}
 ## Diggle
 
 ```{r, echo = F}
@@ -108,9 +140,143 @@ graph_ppp(2000)
 plot(locations, add = T, cex = 0.2)
 ```
 
+:::
 
-
-```{r}
+```{r, echo=FALSE}
 load("Maps_Shapes_and_Objects/models.RData")
 ```
 
+# Estimación Parametrica de la intensidad
+
+:::{.panel-tabset}
+
+## Modelo lineal con tendencia en x 
+
+$$log[\lambda_{\theta}(x, y)] = \theta_0 + \theta_1 x$$
+
+#### Estimación
+
+```{r, echo = F}
+plot(predict(models_list[[1]]), main = "Modelo lineal con tendencia en x")
+plot(locations, add = T, cex = 0.4, pch = 20)
+```
+
+#### Residuales
+
+```{r, echo = F, results='hide'}
+diagnose.ppm(models_list[[1]], which = "smooth",
+             main = "Modelo lineal con tendencia en x")
+```
+
+
+
+## Modelo lineal con tendencia en y 
+
+$$log[\lambda_{\theta}(x, y)] = \theta_0 + \theta_1 y$$
+
+#### Estimación
+
+```{r, echo = F}
+plot(predict(models_list[[2]]), main = "Modelo lineal con tendencia en y")
+plot(locations, add = T, cex = 0.4, pch = 20)
+```
+
+#### Residuales
+
+```{r, echo = F, results='hide'}
+diagnose.ppm(models_list[[2]], which = "smooth",
+             main = "Modelo lineal con tendencia en y")
+```
+
+
+## Modelo lineal con tendencia en ambas direcciones 
+
+$$log[\lambda_{\theta}(x, y)] = \theta_0 + \theta_1 x + \theta_2 y$$
+
+#### Estimación
+
+```{r, echo = F}
+plot(predict(models_list[[3]]),
+     main = "Modelo lineal con tendencia\nen ambas direcciones")
+plot(locations, add = T, cex = 0.4, pch = 20)
+```
+
+#### Residuales
+
+```{r, echo = F, results='hide'}
+diagnose.ppm(models_list[[3]], which = "smooth",
+             main = "Modelo lineal con tendencia\nen ambas direcciones")
+```
+
+:::
+
+## Modelos cuadráticos 
+
+:::{.panel-tabset}
+
+## Modelo cuadrático sin términos cruzados
+
+$$log[\lambda_{\theta}(x, y)] = \theta_0 + \theta_1 x + \theta_2 y + \theta_3 x^2 + \theta_4 y^2$$
+
+#### Estimación
+
+```{r, echo = F}
+plot(predict(models_list[[4]]),
+     main = "Modelo cuadrático sin interacción")
+plot(locations, add = T, cex = 0.4, pch = 20)
+```
+
+#### Residuales
+
+```{r, echo = F, results='hide'}
+diagnose.ppm(models_list[[4]], which = "smooth",
+             main = "Modelo cuadrático sin interacción")
+```
+
+## Modelo cuadrático con interacción 
+$$log[\lambda_{\theta}(x, y)] = \theta_0 + \theta_1 x + \theta_2 y + \theta_3 x^2 + \theta_4 y^2 + \theta_5 xy$$
+
+#### Estimación
+
+```{r, echo = F}
+plot(predict(models_list[[5]]),
+     main = "Modelo cuadrático con interacción")
+plot(locations, add = T, cex = 0.4, pch = 20)
+```
+
+#### Residuales
+
+```{r, echo = F, results='hide'}
+diagnose.ppm(models_list[[5]], which = "smooth",
+             main = "Modelo cuadrático con interacción")
+```
+:::
+
+# Propiedades de segundo orden 
+
+## K
+
+```{r}
+```
+
+```{r, echo=FALSE, message=FALSE, eval=FALSE}
+plot(Kest(ppp.col), main = "Función K", xlab="r [metros]")
+```
+
+## Correlación por pares
+
+```{r, echo=FALSE, eval=FALSE}
+plot(pcf(ppp.col), main = "Pair-Correlation estimada")
+```
+
+
+# Referencias
+- Global Terrorism Database. Kaggle. Retrieved June 11, 2023, from <https://www.kaggle.com/datasets/START-UMD/gtd>
+
+- Reporte victimas conflicto aramado. Gov.co. Retrieved June 11, 2023, <https://www.unidadvictimas.gov.co/es/registro-unico-de-victimas-ruv/37394>
+  
+- Policia nacional de colombia (n.d.). TERRORISMO POLÍTICO: DEFINICIÓN Y ALCANCES DE UN FENÓMENO ELUSIVO. Policia.gov.co. Retrieved June 11, 2023, from <https://www.policia.gov.co/sites/default/files/Terrorismo%20.pdf>
+
+- Policia nacional de colombia TERRORISMO, NARCOTRÁFICO Y DELINCUENCIA. Policia.gov.co. Retrieved June 11, 2023, from    <https://www.policia.gov.co/file/6568/download?token=27d2k7iB>
+  
+- Overall Terrorism Index Score. Vision of Humanity. Retrieved June 11, 2023, from <https://www.visionofhumanity.org/maps/global-terrorism-index/#/>

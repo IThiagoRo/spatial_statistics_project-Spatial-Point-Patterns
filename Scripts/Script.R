@@ -33,7 +33,7 @@ plot(locations, add = T, pch = 20, col = "red")
 
 
 #### PPP object ###
-load("Maps_Shapes_and_Objects//Contour_Points.RData")
+load("Maps_Shapes_and_Objects/Contour_Points.RData")
 
 obs.win <- as(as(st_sf(col_border), "Spatial"), "owin")
 ppp.col <- ppp(x = st_coordinates(locations)[, 1],
@@ -42,7 +42,7 @@ ppp.col <- ppp(x = st_coordinates(locations)[, 1],
 coord.units <- c("metre", "metres")
 unitname(ppp.col) <- coord.units
 plot(ppp.col)
-saveRDS(ppp.col, "Maps_Shapes_and_Objects//ppp.col.Rds")
+saveRDS(ppp.col, "Maps_Shapes_and_Objects/ppp.col.Rds")
 
 
 ### Kernels ###
@@ -64,4 +64,4 @@ mod_quad_xy <- ppm(ppp.col, ~polynom(x,y,2) + I(x*y))
 models_list <- list(mod_lin_x, mod_lin_y, mod_lin_xy, mod_quad, mod_quad_xy)
 save(models_list,file = "Maps_Shapes_and_Objects/models.RData")
 
-plot(pcf(ppp.col), main = "Pair-Correlation estimada")
+
