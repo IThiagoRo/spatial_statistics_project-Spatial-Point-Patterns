@@ -96,8 +96,8 @@ Del gráfico anterior de conteos por cuadrante se aprecia la cantidad de ocurren
 $$
 \begin{cases}
 \begin{aligned}
-\text{H}_0: &\text{Aleatoriedad Espacial} \\
-\text{H}_1: &\text{Autocorrelacón Espacial}
+\text{H}_0: &\text{Proceso Homogeneo} \\
+\text{H}_1: &\text{Proceso Inhomogenea}
 \end{aligned}
 \end{cases}
 $$
@@ -340,8 +340,12 @@ plot(envelopes[[1]], main = "Simulaciones de la PCF Inhomogena")
 plot(envelopes[[2]], main = "Simulaciones de la K función")
 ```
 
+# Conclusión 
+
+Se concluye que este estudio proporciona bases estadísticas que pueden contribuir a la formulación de políticas públicas orientadas a mejorar la seguridad en Colombia.
 
 # Referencias
+
 - Global Terrorism Database. Kaggle. Retrieved June 11, 2023, from <https://www.kaggle.com/datasets/START-UMD/gtd>
 
 - Reporte victimas conflicto aramado. Gov.co. Retrieved June 11, 2023, <https://www.unidadvictimas.gov.co/es/registro-unico-de-victimas-ruv/37394>
