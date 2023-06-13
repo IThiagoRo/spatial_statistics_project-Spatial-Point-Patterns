@@ -1,7 +1,9 @@
 ---
 title: "Patrones Puntuales Espaciales"
 author: 
-  - Santiago Rojas 
+  - Ivan Santiago Rojas Martinez
+  - Juan Diego Espinosa Hernandez 
+  - Daniel Felipe Villa 
 format: html
 toc: true
 toc-location: left
@@ -19,7 +21,6 @@ tbl-colwidths: auto
 link-external-newwindow: true
 editor_options: 
   chunk_output_type: console
-
 ---
 
 
@@ -35,6 +36,8 @@ El terrorismo en Colombia está vinculado a grupos guerrilleros como las FARC, e
 
 En resumen, el terrorismo, principalmente causado por grupos guerrilleros, está muy presente en Colombia, como lo demuestra su posición en el puesto 15 en el índice de terrorismo global.
 
+## Pregunta de investigacíon: ¿Qué departamentos de Colombia requieren una mayor atención del Estado en términos de seguridad?
+
 # Paquetes, lectura de la DB y el mapa de Colombia: 
 
 ## Paquetes:
@@ -49,7 +52,8 @@ library(mapview)
 
 ## Lectura de la base de datos y el mapa de Colombia:
 
-La base de datos pertenece a un dataset de Kaggle sobre terrorismo global, el cual, para el propósito de este trabajo, vamos a tomar la información pertinente a Colombia. Esto nos lleva a tener un conjunto de datos de **7,835** observaciones que abarcan desde el año **1970** hasta el **2017**. 
+La base de datos pertenece a un dataset de Kaggle sobre terrorismo global. Este dataset cuenta con un total de **7,835** observaciones que abarcan desde el año **1970** hasta el año **2017** en el contexto de Colombia. Para nuestro estudio, nos enfocaremos en las observaciones más recientes, correspondientes al año **2017**. Estas observaciones son de particular interés y suman un total de **110** registros en la base de datos.
+
 Se toma del **DANE** la información necesaria para tener información del contorno de Colombia. 
 
 <https://www.kaggle.com/datasets/START-UMD/gtd>
@@ -174,7 +178,7 @@ plot(locations, add = T, cex = 0.2)
 
 :::
 
-Durante la estimación de la intensidad, se prueban diferentes anchos de banda con la intención de seleccionar el ancho de banda óptimo. Se observa que muchos métodos de suavizado no logran capturar de manera precisa la relación espacial. Se destaca el método **Scott** con un ancho de banda en **X** de **57,843.91** y un ancho de banda en **Y** de **88,432.46**, el cual asigna una mayor probabilidad de sufrir actos violentos a las zonas con mayores afectaciones y una menor probabilidad a las zonas con menores afectaciones. Concluimos que el método anterior, junto con su respectivo ancho de banda, se ajusta mejor a nuestro problema de investigación.  
+Durante la estimación de la intensidad, se prueban diferentes anchos de banda con la intención de seleccionar el ancho de banda óptimo. Se observa que muchos métodos de suavizado no logran capturar de manera precisa la relación espacial. Se destaca el método **CvL** con un ancho de banda de **143800.91** el cual asigna una mayor probabilidad de sufrir actos violentos a las zonas con mayores afectaciones y una menor probabilidad a las zonas con menores afectaciones. Concluimos que el método anterior, junto con su respectivo ancho de banda, se ajusta mejor a nuestro problema de investigación.  
 
 ```{r, echo=FALSE}
 load("Maps_Shapes_and_Objects/models.RData")
@@ -289,23 +293,51 @@ diagnose.ppm(models_list[[5]], which = "smooth",
 :::
 
 
-Durante la estimación de la intensidad utilizando métodos paramétricos lineales y cuadráticos, se observa que los métodos lineales no capturan de manera óptima la relación espacial. Sin embargo, al utilizar **métodos cuadráticos** se logra una mejora sustancial. Se destaca especialmente el **método cuadrático con interacción**, ya que es el que mejor asigna la probabilidad de ocurrencia de eventos violentos en determinadas zonas de Colombia.
+Durante la estimación de la intensidad utilizando métodos paramétricos lineales y cuadráticos, se observa que los métodos lineales no capturan de manera óptima la relación espacial. Sin embargo, al utilizar **métodos cuadráticos** se logra una pequeña mejora. Se decide tomar la estimación de la intensidad kernel **CvL**.  
+
 
 # Propiedades de segundo orden 
 
-## K
+## Correlación por pares (PCF Inhomogenea)
+
+```{r, echo=FALSE}
+load("Maps_Shapes_and_Objects/pcf_and_k.RData")
+```
+
+
+```{r, echo=FALSE}
+plot(pcf_and_k[[1]], main = "Pair-Correlation estimada")
+```
+
+
+```{r, eval=FALSE}
+ds <- density.ppp(ppp.col, sigma = cvlbw)
+pcf_inho <- pcfinhom(ppp.col, lambda = ds, correction = "Ripley")
+plot(pcf_inho, main = "Pair-Correlation estimada")
+```
+
+## Función K
+
+```{r, echo=FALSE}
+plot(pcf_and_k[[2]], main = "Función K")
+```
+
+
+```{r, eval=FALSE}
+k_inho <- Kinhom(ppp.col, lambda = cvlbw, correction = "Ripley")
+plot(k_inho, main = "Función K")
+```
+
+## Envolventes
 
 ```{r}
+load("Maps_Shapes_and_Objects/envelopes.RData")
+plot(envelopes[[1]], main = "Simulaciones de la PCF Inhomogena")
 ```
 
-```{r, echo=FALSE, message=FALSE, eval=FALSE}
-plot(Kest(ppp.col), main = "Función K", xlab="r [metros]")
-```
 
-## Correlación por pares
-
-```{r, echo=FALSE, eval=FALSE}
-plot(pcf(ppp.col), main = "Pair-Correlation estimada")
+```{r}
+plot(envelopes[[2]], main = "Simulaciones de la K función")
 ```
 
 

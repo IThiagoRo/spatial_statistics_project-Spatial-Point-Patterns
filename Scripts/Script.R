@@ -13,12 +13,12 @@ plot(colombia$geometry)
 col_border <- colombia$geometry
 
 #Changing the crs for the border
-col_border <- st_transform(col_border, "+proj=utm +zone=18 +ellps=GRS80 +datum=WGS84 +units=m +no_defs")
+col_border <- st_transform(col_border, "+proj=utm +zone=18  +datum=WGS84  +no_defs")
 
 coords <- cbind(db$longitude, db$latitude)
 
-locations <- st_sfc(st_multipoint(as.matrix(db[, 6:5])), crs = "+proj=longlat +zone=18 +ellps=GRS80 +datum=WGS84 +units=m +no_defs")
-locations <- st_transform(locations, "+proj=utm +zone=18 +ellps=GRS80 +datum=WGS84 +units=m +no_defs")
+locations <- st_sfc(st_multipoint(as.matrix(db[, 6:5])), crs = "+proj=longlat +zone=18  +datum=WGS84  +no_defs")
+locations <- st_transform(locations, "+proj=utm +zone=18  +datum=WGS84  +no_defs")
 #locations <- st_as_sf(data.frame(coords), coords = c("X1", "X2"), crs = "+proj=utm +zone=18 +ellps=GRS80 +datum=WGS84 +units=m +no_defs"
 locations <- st_intersection(col_border, locations)
 
@@ -65,3 +65,27 @@ models_list <- list(mod_lin_x, mod_lin_y, mod_lin_xy, mod_quad, mod_quad_xy)
 save(models_list,file = "Maps_Shapes_and_Objects/models.RData")
 
 
+### #########################
+## CvL  ###
+
+ds <- density.ppp(ppp.col, sigma = cvlbw)
+pcf_inho <- pcfinhom(ppp.col, lambda = ds, correction = "Ripley")
+plot(pcf_inho, main = "Pair-Correlation estimada")
+
+k_inho <- Kinhom(ppp.col, lambda = mod_lin_xy, correction = "Ripley")
+plot(k_inho, main = "Función K")
+
+pcf_and_k <- list(pcf_inho, k_inho)
+save(pcf_and_k,file = "Maps_Shapes_and_Objects/pcf_and_k.RData")
+
+
+### Envelopes ###
+
+e1 <- envelope(ppp.col, fun = pcfinhom, nsim = 20, nrank = 1)
+plot(e1)
+
+e2 <- envelope(ppp.col, fun = Kinhom, nsim = 5, nrank = 1)
+plot(e2)
+
+envelopes <- list(e1, e2)
+save(envelopes, file = "Maps_Shapes_and_Objects/envelopes.RData")
